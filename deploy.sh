@@ -34,10 +34,10 @@ if [[ -z "$README_NAME" ]]; then
 fi
 echo "ℹ︎ README_NAME is $README_NAME"
 
-if [[ -z "$DO_NOT_COPY_OTHER_FILES" ]]; then
-	DO_NOT_COPY_OTHER_FILES=false
+if [[ -z "$IGNORE_OTHER_FILES" ]]; then
+	IGNORE_OTHER_FILES=false
 fi
-echo "ℹ︎ DO_NOT_COPY_OTHER_FILES is $DO_NOT_COPY_OTHER_FILES"
+echo "ℹ︎ IGNORE_OTHER_FILES is $IGNORE_OTHER_FILES"
 
 SVN_URL="https://plugins.svn.wordpress.org/${SLUG}/"
 SVN_DIR="${HOME}/svn-${SLUG}"
@@ -51,9 +51,12 @@ svn update --set-depth infinity assets
 svn update --set-depth infinity trunk
 
 echo "➤ Copying files..."
-if [ "$DO_NOT_COPY_OTHER_FILES" = true ]; then
+if [ "$IGNORE_OTHER_FILES" = true ]; then
 	# Copy readme.txt to /trunk
 	cp "$GITHUB_WORKSPACE/$README_NAME" trunk/$README_NAME
+	
+	# Use $TMP_DIR as the source of truth
+	TMP_DIR=$GITHUB_WORKSPACE
 else
 	if [[ -e "$GITHUB_WORKSPACE/.distignore" ]]; then
 		echo "ℹ︎ Using .distignore"
